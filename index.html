@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logitech OMM - Onboard Memory Manager</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <i class="fas fa-mouse"></i>
+                    <span>Logitech OMM</span>
+                </div>
+                <span class="version">v1.0.0</span>
+            </div>
+            <div class="header-right">
+                <div class="connection-status" id="connectionStatus">
+                    <span class="status-dot disconnected"></span>
+                    <span class="status-text">연결 안됨</span>
+                </div>
+                <button class="btn btn-primary" id="connectBtn">
+                    <i class="fas fa-plug"></i>
+                    마우스 연결
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Sidebar - Device Info -->
+            <aside class="sidebar">
+                <div class="device-card" id="deviceCard">
+                    <div class="device-icon">
+                        <i class="fas fa-mouse"></i>
+                    </div>
+                    <h3 class="device-name" id="deviceName">장치를 연결하세요</h3>
+                    <div class="device-info" id="deviceInfo">
+                        <div class="info-row">
+                            <span class="info-label">PID</span>
+                            <span class="info-value" id="devicePid">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">프로토콜</span>
+                            <span class="info-value" id="deviceProtocol">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">프로필</span>
+                            <span class="info-value" id="deviceProfiles">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Selector -->
+                <div class="profile-section">
+                    <h4 class="section-title">프로필</h4>
+                    <div class="profile-list" id="profileList">
+                        <div class="profile-item active" data-profile="1">
+                            <span class="profile-number">1</span>
+                            <span class="profile-name">Profile 1</span>
+                        </div>
+                        <div class="profile-item" data-profile="2">
+                            <span class="profile-number">2</span>
+                            <span class="profile-name">Profile 2</span>
+                        </div>
+                        <div class="profile-item" data-profile="3">
+                            <span class="profile-number">3</span>
+                            <span class="profile-name">Profile 3</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <button class="btn btn-secondary" id="exportBtn" disabled>
+                        <i class="fas fa-download"></i>
+                        내보내기
+                    </button>
+                    <button class="btn btn-secondary" id="importBtn" disabled>
+                        <i class="fas fa-upload"></i>
+                        가져오기
+                    </button>
+                    <input type="file" id="importFile" accept=".json" hidden>
+                </div>
+            </aside>
+
+            <!-- Settings Panel -->
+            <div class="settings-panel">
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab active" data-tab="dpi">
+                        <i class="fas fa-tachometer-alt"></i>
+                        DPI 설정
+                    </button>
+                    <button class="tab" data-tab="buttons">
+                        <i class="fas fa-hand-pointer"></i>
+                        버튼 매핑
+                    </button>
+                    <button class="tab" data-tab="rgb">
+                        <i class="fas fa-palette"></i>
+                        RGB 조명
+                    </button>
+                    <button class="tab" data-tab="advanced">
+                        <i class="fas fa-cog"></i>
+                        고급 설정
+                    </button>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <!-- DPI Settings -->
+                    <div class="tab-pane active" id="dpi">
+                        <div class="settings-header">
+                            <h2>DPI 설정</h2>
+                            <p>마우스 감도를 설정합니다. 최대 5개의 DPI 단계를 구성할 수 있습니다.</p>
+                        </div>
+
+                        <div class="dpi-settings">
+                            <div class="dpi-stages" id="dpiStages">
+                                <div class="dpi-stage active" data-stage="1">
+                                    <div class="stage-header">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" checked>
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <span class="stage-label">단계 1</span>
+                                        <span class="stage-color" style="background: #00ff00;"></span>
+                                    </div>
+                                    <div class="stage-values">
+                                        <div class="input-group">
+                                            <label>X DPI</label>
+                                            <input type="number" class="dpi-input" value="800" min="100" max="25600" step="50">
+                                        </div>
+                                        <div class="input-group">
+                                            <label>Y DPI</label>
+                                            <input type="number" class="dpi-input" value="800" min="100" max="25600" step="50">
+                                        </div>
+                                    </div>
+                                    <input type="range" class="dpi-slider" min="100" max="25600" value="800" step="50">
+                                </div>
+
+                                <div class="dpi-stage" data-stage="2">
+                                    <div class="stage-header">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" checked>
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <span class="stage-label">단계 2</span>
+                                        <span class="stage-color" style="background: #ffff00;"></span>
+                                    </div>
+                                    <div class="stage-values">
+                                        <div class="input-group">
+                                            <label>X DPI</label>
+                                            <input type="number" class="dpi-input" value="1600" min="100" max="25600" step="50">
+                                        </div>
+                                        <div class="input-group">
+                                            <label>Y DPI</label>
+                                            <input type="number" class="dpi-input" value="1600" min="100" max="25600" step="50">
+                                        </div>
+                                    </div>
+                                    <input type="range" class="dpi-slider" min="100" max="25600" value="1600" step="50">
+                                </div>
+
+                                <div class="dpi-stage" data-stage="3">
+                                    <div class="stage-header">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" checked>
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <span class="stage-label">단계 3</span>
+                                        <span class="stage-color" style="background: #00ffff;"></span>
+                                    </div>
+                                    <div class="stage-values">
+                                        <div class="input-group">
+                                            <label>X DPI</label>
+                                            <input type="number" class="dpi-input" value="3200" min="100" max="25600" step="50">
+                                        </div>
+                                        <div class="input-group">
+                                            <label>Y DPI</label>
+                                            <input type="number" class="dpi-input" value="3200" min="100" max="25600" step="50">
+                                        </div>
+                                    </div>
+                                    <input type="range" class="dpi-slider" min="100" max="25600" value="3200" step="50">
+                                </div>
+
+                                <div class="dpi-stage" data-stage="4">
+                                    <div class="stage-header">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <span class="stage-label">단계 4</span>
+                                        <span class="stage-color" style="background: #ff00ff;"></span>
+                                    </div>
+                                    <div class="stage-values">
+                                        <div class="input-group">
+                                            <label>X DPI</label>
+                                            <input type="number" class="dpi-input" value="6400" min="100" max="25600" step="50">
+                                        </div>
+                                        <div class="input-group">
+                                            <label>Y DPI</label>
+                                            <input type="number" class="dpi-input" value="6400" min="100" max="25600" step="50">
+                                        </div>
+                                    </div>
+                                    <input type="range" class="dpi-slider" min="100" max="25600" value="6400" step="50">
+                                </div>
+
+                                <div class="dpi-stage" data-stage="5">
+                                    <div class="stage-header">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <span class="stage-label">단계 5</span>
+                                        <span class="stage-color" style="background: #ff0000;"></span>
+                                    </div>
+                                    <div class="stage-values">
+                                        <div class="input-group">
+                                            <label>X DPI</label>
+                                            <input type="number" class="dpi-input" value="12800" min="100" max="25600" step="50">
+                                        </div>
+                                        <div class="input-group">
+                                            <label>Y DPI</label>
+                                            <input type="number" class="dpi-input" value="12800" min="100" max="25600" step="50">
+                                        </div>
+                                    </div>
+                                    <input type="range" class="dpi-slider" min="100" max="25600" value="12800" step="50">
+                                </div>
+                            </div>
+
+                            <div class="dpi-defaults">
+                                <div class="input-group">
+                                    <label>기본 DPI 단계</label>
+                                    <select id="defaultDpiStage">
+                                        <option value="1">단계 1</option>
+                                        <option value="2" selected>단계 2</option>
+                                        <option value="3">단계 3</option>
+                                        <option value="4">단계 4</option>
+                                        <option value="5">단계 5</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Button Mapping -->
+                    <div class="tab-pane" id="buttons">
+                        <div class="settings-header">
+                            <h2>버튼 매핑</h2>
+                            <p>각 마우스 버튼에 원하는 기능을 할당합니다.</p>
+                        </div>
+
+                        <div class="button-mapping">
+                            <div class="mouse-visual">
+                                <svg viewBox="0 0 200 300" class="mouse-svg">
+                                    <!-- Mouse body -->
+                                    <path d="M100 10 C40 10 20 60 20 120 L20 220 C20 270 50 290 100 290 C150 290 180 270 180 220 L180 120 C180 60 160 10 100 10"
+                                          fill="#2a2a2a" stroke="#444" stroke-width="2"/>
+                                    <!-- Left button -->
+                                    <path id="btn-left" class="mouse-button" data-button="left"
+                                          d="M25 30 L95 30 L95 130 C95 140 85 145 75 145 L25 145 L25 30"
+                                          fill="#3a3a3a" stroke="#555" stroke-width="1"/>
+                                    <!-- Right button -->
+                                    <path id="btn-right" class="mouse-button" data-button="right"
+                                          d="M105 30 L175 30 L175 145 L125 145 C115 145 105 140 105 130 L105 30"
+                                          fill="#3a3a3a" stroke="#555" stroke-width="1"/>
+                                    <!-- Middle button / Scroll -->
+                                    <rect id="btn-middle" class="mouse-button" data-button="middle"
+                                          x="85" y="50" width="30" height="60" rx="10"
+                                          fill="#4a4a4a" stroke="#666" stroke-width="1"/>
+                                    <!-- Side buttons -->
+                                    <rect id="btn-back" class="mouse-button" data-button="back"
+                                          x="5" y="140" width="15" height="30" rx="3"
+                                          fill="#3a3a3a" stroke="#555" stroke-width="1"/>
+                                    <rect id="btn-forward" class="mouse-button" data-button="forward"
+                                          x="5" y="175" width="15" height="30" rx="3"
+                                          fill="#3a3a3a" stroke="#555" stroke-width="1"/>
+                                    <!-- DPI button -->
+                                    <circle id="btn-dpi" class="mouse-button" data-button="dpi"
+                                            cx="100" cy="160" r="12"
+                                            fill="#3a3a3a" stroke="#555" stroke-width="1"/>
+                                    <!-- G-Shift button (G502) -->
+                                    <rect id="btn-gshift" class="mouse-button" data-button="gshift"
+                                          x="25" y="200" width="20" height="15" rx="3"
+                                          fill="#3a3a3a" stroke="#555" stroke-width="1"/>
+                                </svg>
+                            </div>
+
+                            <div class="button-list">
+                                <div class="button-item" data-button="left">
+                                    <span class="button-name">
+                                        <i class="fas fa-mouse-pointer"></i>
+                                        왼쪽 버튼
+                                    </span>
+                                    <select class="button-action">
+                                        <option value="click">클릭</option>
+                                        <option value="dpi_up">DPI 증가</option>
+                                        <option value="dpi_down">DPI 감소</option>
+                                        <option value="dpi_cycle">DPI 순환</option>
+                                        <option value="key">키 입력</option>
+                                        <option value="macro">매크로</option>
+                                        <option value="disabled">비활성화</option>
+                                    </select>
+                                </div>
+                                <div class="button-item" data-button="right">
+                                    <span class="button-name">
+                                        <i class="fas fa-mouse-pointer"></i>
+                                        오른쪽 버튼
+                                    </span>
+                                    <select class="button-action">
+                                        <option value="context">컨텍스트 메뉴</option>
+                                        <option value="click">클릭</option>
+                                        <option value="dpi_up">DPI 증가</option>
+                                        <option value="dpi_down">DPI 감소</option>
+                                        <option value="key">키 입력</option>
+                                        <option value="macro">매크로</option>
+                                        <option value="disabled">비활성화</option>
+                                    </select>
+                                </div>
+                                <div class="button-item" data-button="middle">
+                                    <span class="button-name">
+                                        <i class="fas fa-circle"></i>
+                                        휠 클릭
+                                    </span>
+                                    <select class="button-action">
+                                        <option value="middle_click">휠 클릭</option>
+                                        <option value="scroll_mode">스크롤 모드 전환</option>
+                                        <option value="key">키 입력</option>
+                                        <option value="macro">매크로</option>
+                                        <option value="disabled">비활성화</option>
+                                    </select>
+                                </div>
+                                <div class="button-item" data-button="back">
+                                    <span class="button-name">
+                                        <i class="fas fa-arrow-left"></i>
+                                        뒤로 가기
+                                    </span>
+                                    <select class="button-action">
+                                        <option value="back">뒤로</option>
+                                        <option value="forward">앞으로</option>
+                                        <option value="key">키 입력</option>
+                                        <option value="macro">매크로</option>
+                                        <option value="disabled">비활성화</option>
+                                    </select>
+                                </div>
+                                <div class="button-item" data-button="forward">
+                                    <span class="button-name">
+                                        <i class="fas fa-arrow-right"></i>
+                                        앞으로 가기
+                                    </span>
+                                    <select class="button-action">
+                                        <option value="forward">앞으로</option>
+                                        <option value="back">뒤로</option>
+                                        <option value="key">키 입력</option>
+                                        <option value="macro">매크로</option>
+                                        <option value="disabled">비활성화</option>
+                                    </select>
+                                </div>
+                                <div class="button-item" data-button="dpi">
+                                    <span class="button-name">
+                                        <i class="fas fa-tachometer-alt"></i>
+                                        DPI 버튼
+                                    </span>
+                                    <select class="button-action">
+                                        <option value="dpi_cycle">DPI 순환</option>
+                                        <option value="dpi_up">DPI 증가</option>
+                                        <option value="dpi_down">DPI 감소</option>
+                                        <option value="dpi_shift">DPI 시프트</option>
+                                        <option value="key">키 입력</option>
+                                        <option value="macro">매크로</option>
+                                        <option value="disabled">비활성화</option>
+                                    </select>
+                                </div>
+                                <div class="button-item" data-button="gshift">
+                                    <span class="button-name">
+                                        <i class="fas fa-layer-group"></i>
+                                        G-Shift
+                                    </span>
+                                    <select class="button-action">
+                                        <option value="gshift">G-Shift</option>
+                                        <option value="profile_cycle">프로필 순환</option>
+                                        <option value="key">키 입력</option>
+                                        <option value="macro">매크로</option>
+                                        <option value="disabled">비활성화</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Key Input Modal -->
+                        <div class="key-config hidden" id="keyConfig">
+                            <h4>키 입력 설정</h4>
+                            <div class="key-input-area">
+                                <input type="text" id="keyInput" placeholder="키를 눌러주세요" readonly>
+                                <div class="modifier-checkboxes">
+                                    <label><input type="checkbox" id="modCtrl"> Ctrl</label>
+                                    <label><input type="checkbox" id="modShift"> Shift</label>
+                                    <label><input type="checkbox" id="modAlt"> Alt</label>
+                                    <label><input type="checkbox" id="modWin"> Win</label>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" id="saveKeyConfig">저장</button>
+                        </div>
+                    </div>
+
+                    <!-- RGB Settings -->
+                    <div class="tab-pane" id="rgb">
+                        <div class="settings-header">
+                            <h2>RGB 조명</h2>
+                            <p>마우스 LED 조명 효과를 설정합니다.</p>
+                        </div>
+
+                        <div class="rgb-settings">
+                            <div class="rgb-preview">
+                                <div class="rgb-mouse-preview" id="rgbPreview">
+                                    <div class="led-zone" id="ledZone1"></div>
+                                    <div class="led-zone" id="ledZone2"></div>
+                                </div>
+                            </div>
+
+                            <div class="rgb-controls">
+                                <div class="control-group">
+                                    <label>효과</label>
+                                    <select id="rgbEffect">
+                                        <option value="off">끄기</option>
+                                        <option value="static">고정색</option>
+                                        <option value="breathing">숨쉬기</option>
+                                        <option value="cycle">색상 순환</option>
+                                    </select>
+                                </div>
+
+                                <div class="control-group" id="colorPicker">
+                                    <label>색상</label>
+                                    <div class="color-input-wrapper">
+                                        <input type="color" id="rgbColor" value="#00ff00">
+                                        <input type="text" id="rgbColorHex" value="#00ff00" maxlength="7">
+                                    </div>
+                                </div>
+
+                                <div class="control-group" id="brightnessControl">
+                                    <label>밝기: <span id="brightnessValue">100</span>%</label>
+                                    <input type="range" id="rgbBrightness" min="0" max="100" value="100">
+                                </div>
+
+                                <div class="control-group" id="speedControl">
+                                    <label>속도: <span id="speedValue">1000</span>ms</label>
+                                    <input type="range" id="rgbSpeed" min="100" max="5000" value="1000" step="100">
+                                </div>
+
+                                <div class="color-presets">
+                                    <h4>프리셋 색상</h4>
+                                    <div class="preset-colors">
+                                        <button class="color-preset" style="background: #ff0000" data-color="#ff0000"></button>
+                                        <button class="color-preset" style="background: #ff7f00" data-color="#ff7f00"></button>
+                                        <button class="color-preset" style="background: #ffff00" data-color="#ffff00"></button>
+                                        <button class="color-preset" style="background: #00ff00" data-color="#00ff00"></button>
+                                        <button class="color-preset" style="background: #00ffff" data-color="#00ffff"></button>
+                                        <button class="color-preset" style="background: #0000ff" data-color="#0000ff"></button>
+                                        <button class="color-preset" style="background: #7f00ff" data-color="#7f00ff"></button>
+                                        <button class="color-preset" style="background: #ff00ff" data-color="#ff00ff"></button>
+                                        <button class="color-preset" style="background: #ffffff" data-color="#ffffff"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Settings -->
+                    <div class="tab-pane" id="advanced">
+                        <div class="settings-header">
+                            <h2>고급 설정</h2>
+                            <p>폴링 레이트, 센서 설정 등 고급 옵션을 구성합니다.</p>
+                        </div>
+
+                        <div class="advanced-settings">
+                            <div class="setting-group">
+                                <h4>폴링 레이트</h4>
+                                <p class="setting-desc">마우스가 PC에 위치를 보고하는 빈도입니다. 높을수록 반응이 빠릅니다.</p>
+                                <div class="polling-options">
+                                    <label class="radio-option">
+                                        <input type="radio" name="polling" value="125">
+                                        <span>125 Hz</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="polling" value="250">
+                                        <span>250 Hz</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="polling" value="500">
+                                        <span>500 Hz</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="polling" value="1000" checked>
+                                        <span>1000 Hz</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="setting-group">
+                                <h4>온보드 메모리 모드</h4>
+                                <p class="setting-desc">활성화하면 마우스가 자체 메모리의 설정을 사용합니다.</p>
+                                <label class="switch">
+                                    <input type="checkbox" id="onboardMode" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-group">
+                                <h4>앵글 스내핑</h4>
+                                <p class="setting-desc">직선을 더 쉽게 그릴 수 있도록 도와줍니다.</p>
+                                <label class="switch">
+                                    <input type="checkbox" id="angleSnapping">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-group">
+                                <h4>LOD (Lift-Off Distance)</h4>
+                                <p class="setting-desc">마우스를 들었을 때 추적이 중단되는 높이입니다.</p>
+                                <select id="lodSetting">
+                                    <option value="low">낮음 (1mm)</option>
+                                    <option value="medium" selected>보통 (2mm)</option>
+                                    <option value="high">높음 (3mm)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-bar">
+                    <button class="btn btn-secondary" id="resetBtn">
+                        <i class="fas fa-undo"></i>
+                        초기화
+                    </button>
+                    <button class="btn btn-primary" id="applyBtn" disabled>
+                        <i class="fas fa-check"></i>
+                        장치에 적용
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Toast Notifications -->
+        <div class="toast-container" id="toastContainer"></div>
+
+        <!-- Modal -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal" id="modal">
+                <div class="modal-header">
+                    <h3 id="modalTitle">알림</h3>
+                    <button class="modal-close" id="modalClose">&times;</button>
+                </div>
+                <div class="modal-body" id="modalBody"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="modalCancel">취소</button>
+                    <button class="btn btn-primary" id="modalConfirm">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/constants.js"></script>
+    <script src="js/hidpp.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

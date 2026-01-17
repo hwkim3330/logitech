@@ -557,9 +557,68 @@ class HidppDevice {
     }
 
     /**
-     * RGB LED 설정
+     * 온보드 프로필 전체 데이터 읽기
      */
-    async setRgbEffect(effect, color, brightness, speed) {
+    async readFullProfile(profileIndex) {
+        if (!await this.hasFeature(HIDPP.FEATURES.ONBOARD_PROFILES)) {
+            throw new Error('온보드 프로필을 지원하지 않는 장치입니다.');
+        }
+
+        const info = await this.getOnboardProfileInfo();
+
+        // 프로필 디렉토리 페이지 읽기 (페이지 0)
+        const directoryPage = await this.readMemoryPage(0);
+
+        // 프로필 엔트리 찾기 (각 엔트리 4바이트)
+        const entryOffset = profileIndex * 4;
+        const profilePage = directoryPage[entryOffset + 1];
+        const profileEnabled = directoryPage[entryOffset] !== 0xff;
+
+        if (!profileEnabled || profilePage === 0xff) {
+            return null; // 프로필이 비활성화됨
+        }
+
+        // 프로필 데이터 페이지 읽기
+        const profileData = await this.readMemoryPage(profilePage);
+
+        return {
+            index: profileIndex,
+            enabled: profileEnabled,
+            page: profilePage,
+            data: profileData,
+            info: info,
+        };
+    }
+
+    /**
+     * 모든 프로필 읽기
+     */
+    async readAllProfiles() {
+        if (!await this.hasFeature(HIDPP.FEATURES.ONBOARD_PROFILES)) {
+            return [];
+        }
+
+        const info = await this.getOnboardProfileInfo();
+        const profiles = [];
+
+        for (let i = 0; i < info.profileCount; i++) {
+            try {
+                const profile = await this.readFullProfile(i);
+                if (profile) {
+                    profiles.push(profile);
+                }
+            } catch (e) {
+                console.warn(`프로필 ${i} 읽기 실패:`, e);
+            }
+        }
+
+        return profiles;
+    }
+
+    /**
+     * RGB LED 설정 (단일 영역)
+     */
+    async setRgbEffectForZone(zoneIndex, effect, color, brightness, speed) {
         // RGB_EFFECTS feature 사용 시도
         if (await this.hasFeature(HIDPP.FEATURES.RGB_EFFECTS)) {
             let modeCode;
@@ -586,7 +645,7 @@ class HidppDevice {
             const b = parseInt(color.slice(5, 7), 16);
 
             const params = [
-                0x00, // zone index
+                zoneIndex, // zone index (0=logo, 1=dpi 등)
                 modeCode,
                 r, g, b,
                 Math.round(brightness * 2.55), // 0-255
@@ -598,13 +657,25 @@ class HidppDevice {
             return;
         }
 
-        // BACKLIGHT feature 사용 시도
-        if (await this.hasFeature(HIDPP.FEATURES.BACKLIGHT)) {
-            console.warn('BACKLIGHT feature를 통한 RGB 제어는 제한적입니다.');
-            return;
+        throw new Error('RGB 조명 기능을 지원하지 않는 장치입니다.');
+    }
+
+    /**
+     * RGB LED 설정 (모든 영역)
+     */
+    async setRgbEffect(effect, color, brightness, speed) {
+        // 두 영역 모두 설정 (로고=0, DPI=1)
+        try {
+            await this.setRgbEffectForZone(0, effect, color, brightness, speed);
+        } catch (e) {
+            console.warn('로고 LED 설정 실패:', e);
         }
 
-        throw new Error('RGB 조명 기능을 지원하지 않는 장치입니다.');
+        try {
+            await this.setRgbEffectForZone(1, effect, color, brightness, speed);
+        } catch (e) {
+            console.warn('DPI LED 설정 실패:', e);
+        }
     }
 
     /**

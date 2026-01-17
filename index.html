@@ -259,41 +259,77 @@
 
                         <div class="button-mapping">
                             <div class="mouse-visual">
-                                <svg viewBox="0 0 200 300" class="mouse-svg">
-                                    <!-- Mouse body -->
-                                    <path d="M100 10 C40 10 20 60 20 120 L20 220 C20 270 50 290 100 290 C150 290 180 270 180 220 L180 120 C180 60 160 10 100 10"
+                                <svg viewBox="0 0 200 320" class="mouse-svg">
+                                    <!-- Mouse body - G502 style -->
+                                    <path d="M100 10 C40 10 20 60 20 120 L20 240 C20 290 50 310 100 310 C150 310 180 290 180 240 L180 120 C180 60 160 10 100 10"
                                           fill="#2a2a2a" stroke="#444" stroke-width="2"/>
+
                                     <!-- Left button -->
                                     <path id="btn-left" class="mouse-button" data-button="left"
-                                          d="M25 30 L95 30 L95 130 C95 140 85 145 75 145 L25 145 L25 30"
+                                          d="M25 25 L95 25 L95 120 C95 130 85 135 75 135 L25 135 L25 25"
                                           fill="#3a3a3a" stroke="#555" stroke-width="1"/>
+
                                     <!-- Right button -->
                                     <path id="btn-right" class="mouse-button" data-button="right"
-                                          d="M105 30 L175 30 L175 145 L125 145 C115 145 105 140 105 130 L105 30"
+                                          d="M105 25 L175 25 L175 135 L125 135 C115 135 105 130 105 120 L105 25"
                                           fill="#3a3a3a" stroke="#555" stroke-width="1"/>
-                                    <!-- Middle button / Scroll -->
+
+                                    <!-- Scroll wheel -->
                                     <rect id="btn-middle" class="mouse-button" data-button="middle"
-                                          x="85" y="50" width="30" height="60" rx="10"
+                                          x="85" y="45" width="30" height="55" rx="10"
                                           fill="#4a4a4a" stroke="#666" stroke-width="1"/>
-                                    <!-- Side buttons -->
+
+                                    <!-- Wheel tilt indicators -->
+                                    <path id="btn-wheel-left" class="mouse-button" data-button="wheel_left"
+                                          d="M82 70 L75 78 L82 86" fill="none" stroke="#666" stroke-width="2"/>
+                                    <path id="btn-wheel-right" class="mouse-button" data-button="wheel_right"
+                                          d="M118 70 L125 78 L118 86" fill="none" stroke="#666" stroke-width="2"/>
+
+                                    <!-- G7 DPI Up button (behind wheel) -->
+                                    <rect id="btn-dpi-up" class="mouse-button" data-button="dpi_up"
+                                          x="88" y="105" width="24" height="12" rx="2"
+                                          fill="#3a3a3a" stroke="#555" stroke-width="1"/>
+
+                                    <!-- G8 DPI Down button -->
+                                    <rect id="btn-dpi-down" class="mouse-button" data-button="dpi_down"
+                                          x="88" y="120" width="24" height="12" rx="2"
+                                          fill="#3a3a3a" stroke="#555" stroke-width="1"/>
+
+                                    <!-- Side buttons G4 (back) and G5 (forward) -->
                                     <rect id="btn-back" class="mouse-button" data-button="back"
-                                          x="5" y="140" width="15" height="30" rx="3"
+                                          x="5" y="130" width="15" height="28" rx="3"
                                           fill="#3a3a3a" stroke="#555" stroke-width="1"/>
                                     <rect id="btn-forward" class="mouse-button" data-button="forward"
-                                          x="5" y="175" width="15" height="30" rx="3"
+                                          x="5" y="162" width="15" height="28" rx="3"
                                           fill="#3a3a3a" stroke="#555" stroke-width="1"/>
-                                    <!-- DPI button -->
-                                    <circle id="btn-dpi" class="mouse-button" data-button="dpi"
-                                            cx="100" cy="160" r="12"
+
+                                    <!-- G9 Sniper/DPI Shift button (thumb) -->
+                                    <circle id="btn-dpi-shift" class="mouse-button" data-button="dpi_shift"
+                                            cx="35" cy="210" r="14"
                                             fill="#3a3a3a" stroke="#555" stroke-width="1"/>
-                                    <!-- G-Shift button (G502) -->
-                                    <rect id="btn-gshift" class="mouse-button" data-button="gshift"
-                                          x="25" y="200" width="20" height="15" rx="3"
+
+                                    <!-- G6 Profile/G-Shift button -->
+                                    <rect id="btn-g6" class="mouse-button" data-button="g6"
+                                          x="25" y="245" width="25" height="12" rx="2"
                                           fill="#3a3a3a" stroke="#555" stroke-width="1"/>
+
+                                    <!-- RGB LED zones -->
+                                    <path class="led-zone-svg" id="led-logo"
+                                          d="M80 175 Q100 165 120 175 Q100 185 80 175"
+                                          fill="#00d4aa" opacity="0.8"/>
+                                    <path class="led-zone-svg" id="led-dpi"
+                                          d="M92 140 L108 140 L108 145 L92 145 Z"
+                                          fill="#00d4aa" opacity="0.8"/>
+
+                                    <!-- Button labels -->
+                                    <text x="60" y="85" font-size="8" fill="#666">L</text>
+                                    <text x="135" y="85" font-size="8" fill="#666">R</text>
+                                    <text x="97" y="78" font-size="6" fill="#888">M</text>
                                 </svg>
                             </div>
 
-                            <div class="button-list">
+                            <div class="button-list" id="buttonList">
+                                <!-- G502 11개 버튼 -->
                                 <div class="button-item" data-button="left">
                                     <span class="button-name">
                                         <i class="fas fa-mouse-pointer"></i>
@@ -337,10 +373,38 @@
                                         <option value="disabled">비활성화</option>
                                     </select>
                                 </div>
+                                <div class="button-item" data-button="wheel_left">
+                                    <span class="button-name">
+                                        <i class="fas fa-arrow-circle-left"></i>
+                                        휠 좌측 틸트
+                                    </span>
+                                    <select class="button-action">
+                                        <option value="scroll_left">좌측 스크롤</option>
+                                        <option value="back">뒤로</option>
+                                        <option value="forward">앞으로</option>
+                                        <option value="key">키 입력</option>
+                                        <option value="macro">매크로</option>
+                                        <option value="disabled">비활성화</option>
+                                    </select>
+                                </div>
+                                <div class="button-item" data-button="wheel_right">
+                                    <span class="button-name">
+                                        <i class="fas fa-arrow-circle-right"></i>
+                                        휠 우측 틸트
+                                    </span>
+                                    <select class="button-action">
+                                        <option value="scroll_right">우측 스크롤</option>
+                                        <option value="back">뒤로</option>
+                                        <option value="forward">앞으로</option>
+                                        <option value="key">키 입력</option>
+                                        <option value="macro">매크로</option>
+                                        <option value="disabled">비활성화</option>
+                                    </select>
+                                </div>
                                 <div class="button-item" data-button="back">
                                     <span class="button-name">
                                         <i class="fas fa-arrow-left"></i>
-                                        뒤로 가기
+                                        뒤로 가기 (G4)
                                     </span>
                                     <select class="button-action">
                                         <option value="back">뒤로</option>
@@ -353,7 +417,7 @@
                                 <div class="button-item" data-button="forward">
                                     <span class="button-name">
                                         <i class="fas fa-arrow-right"></i>
-                                        앞으로 가기
+                                        앞으로 가기 (G5)
                                     </span>
                                     <select class="button-action">
                                         <option value="forward">앞으로</option>
@@ -363,25 +427,51 @@
                                         <option value="disabled">비활성화</option>
                                     </select>
                                 </div>
-                                <div class="button-item" data-button="dpi">
+                                <div class="button-item" data-button="dpi_up">
                                     <span class="button-name">
-                                        <i class="fas fa-tachometer-alt"></i>
-                                        DPI 버튼
+                                        <i class="fas fa-chevron-up"></i>
+                                        DPI 증가 (G7)
                                     </span>
                                     <select class="button-action">
-                                        <option value="dpi_cycle">DPI 순환</option>
                                         <option value="dpi_up">DPI 증가</option>
                                         <option value="dpi_down">DPI 감소</option>
-                                        <option value="dpi_shift">DPI 시프트</option>
+                                        <option value="dpi_cycle">DPI 순환</option>
                                         <option value="key">키 입력</option>
                                         <option value="macro">매크로</option>
                                         <option value="disabled">비활성화</option>
                                     </select>
                                 </div>
-                                <div class="button-item" data-button="gshift">
+                                <div class="button-item" data-button="dpi_down">
+                                    <span class="button-name">
+                                        <i class="fas fa-chevron-down"></i>
+                                        DPI 감소 (G8)
+                                    </span>
+                                    <select class="button-action">
+                                        <option value="dpi_down">DPI 감소</option>
+                                        <option value="dpi_up">DPI 증가</option>
+                                        <option value="dpi_cycle">DPI 순환</option>
+                                        <option value="key">키 입력</option>
+                                        <option value="macro">매크로</option>
+                                        <option value="disabled">비활성화</option>
+                                    </select>
+                                </div>
+                                <div class="button-item" data-button="dpi_shift">
+                                    <span class="button-name">
+                                        <i class="fas fa-tachometer-alt"></i>
+                                        DPI 시프트 (G9/스나이퍼)
+                                    </span>
+                                    <select class="button-action">
+                                        <option value="dpi_shift">DPI 시프트</option>
+                                        <option value="dpi_cycle">DPI 순환</option>
+                                        <option value="key">키 입력</option>
+                                        <option value="macro">매크로</option>
+                                        <option value="disabled">비활성화</option>
+                                    </select>
+                                </div>
+                                <div class="button-item" data-button="g6">
                                     <span class="button-name">
                                         <i class="fas fa-layer-group"></i>
-                                        G-Shift
+                                        G6 (프로필/G-Shift)
                                     </span>
                                     <select class="button-action">
                                         <option value="gshift">G-Shift</option>
@@ -414,18 +504,38 @@
                     <div class="tab-pane" id="rgb">
                         <div class="settings-header">
                             <h2>RGB 조명</h2>
-                            <p>마우스 LED 조명 효과를 설정합니다.</p>
+                            <p>G502의 두 LED 영역(로고, DPI 표시등)을 각각 설정합니다.</p>
                         </div>
 
                         <div class="rgb-settings">
                             <div class="rgb-preview">
                                 <div class="rgb-mouse-preview" id="rgbPreview">
-                                    <div class="led-zone" id="ledZone1"></div>
-                                    <div class="led-zone" id="ledZone2"></div>
+                                    <div class="led-zone" id="ledZone1" title="로고 LED"></div>
+                                    <div class="led-zone" id="ledZone2" title="DPI LED"></div>
+                                </div>
+                                <div class="led-zone-labels">
+                                    <span class="zone-label" id="zone1Label">로고</span>
+                                    <span class="zone-label" id="zone2Label">DPI</span>
                                 </div>
                             </div>
 
                             <div class="rgb-controls">
+                                <!-- LED Zone Selector -->
+                                <div class="control-group">
+                                    <label>LED 영역</label>
+                                    <div class="zone-selector">
+                                        <button class="zone-btn active" data-zone="logo" id="zoneLogo">
+                                            <i class="fas fa-certificate"></i> 로고
+                                        </button>
+                                        <button class="zone-btn" data-zone="dpi" id="zoneDpi">
+                                            <i class="fas fa-tachometer-alt"></i> DPI
+                                        </button>
+                                        <button class="zone-btn" data-zone="both" id="zoneBoth">
+                                            <i class="fas fa-link"></i> 동기화
+                                        </button>
+                                    </div>
+                                </div>
+
                                 <div class="control-group">
                                     <label>효과</label>
                                     <select id="rgbEffect">

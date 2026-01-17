@@ -275,48 +275,88 @@ class UIManager {
     }
 
     /**
-     * RGB UI 업데이트
+     * RGB UI 업데이트 (두 영역 지원)
      */
     updateRgbUI(profile) {
         const rgb = profile.rgb;
 
-        document.getElementById('rgbEffect').value = rgb.effect;
-        document.getElementById('rgbColor').value = rgb.color;
-        document.getElementById('rgbColorHex').value = rgb.color;
-        document.getElementById('rgbBrightness').value = rgb.brightness;
-        document.getElementById('brightnessValue').textContent = rgb.brightness;
-        document.getElementById('rgbSpeed').value = rgb.speed;
-        document.getElementById('speedValue').textContent = rgb.speed;
+        // 기본적으로 로고 영역 설정을 표시 (동기화된 경우)
+        const logoSettings = rgb.logo || rgb;
+        const dpiSettings = rgb.dpi || rgb;
+
+        document.getElementById('rgbEffect').value = logoSettings.effect;
+        document.getElementById('rgbColor').value = logoSettings.color;
+        document.getElementById('rgbColorHex').value = logoSettings.color;
+        document.getElementById('rgbBrightness').value = logoSettings.brightness;
+        document.getElementById('brightnessValue').textContent = logoSettings.brightness;
+        document.getElementById('rgbSpeed').value = logoSettings.speed;
+        document.getElementById('speedValue').textContent = logoSettings.speed;
+
+        // 동기화 상태에 따라 버튼 활성화
+        if (rgb.syncZones) {
+            document.getElementById('zoneBoth')?.click();
+        }
 
         // RGB 프리뷰 업데이트
         this.updateRgbPreview(rgb);
 
         // 효과에 따른 컨트롤 표시/숨김
-        this.updateRgbControls(rgb.effect);
+        this.updateRgbControls(logoSettings.effect);
     }
 
     /**
-     * RGB 프리뷰 업데이트
+     * RGB 프리뷰 업데이트 (두 영역)
      */
     updateRgbPreview(rgb) {
-        const zones = document.querySelectorAll('.led-zone');
-        const brightness = rgb.brightness / 100;
+        const zone1 = document.getElementById('ledZone1'); // 로고
+        const zone2 = document.getElementById('ledZone2'); // DPI
 
-        zones.forEach(zone => {
-            if (rgb.effect === 'off') {
-                zone.style.background = 'transparent';
-                zone.style.boxShadow = 'none';
-            } else if (rgb.effect === 'cycle') {
-                zone.style.animation = `rgbCycle ${rgb.speed}ms linear infinite`;
-                zone.style.boxShadow = `0 0 30px currentColor`;
-            } else {
-                zone.style.animation = rgb.effect === 'breathing' ?
-                    `breathing ${rgb.speed}ms ease-in-out infinite` : 'none';
-                zone.style.background = rgb.color;
-                zone.style.opacity = brightness;
-                zone.style.boxShadow = `0 0 30px ${rgb.color}`;
-            }
-        });
+        // 각 영역별 설정 가져오기
+        const logoSettings = rgb.logo || rgb;
+        const dpiSettings = rgb.dpi || rgb;
+
+        // 로고 LED 업데이트
+        this.applyZoneEffect(zone1, logoSettings);
+
+        // DPI LED 업데이트
+        this.applyZoneEffect(zone2, dpiSettings);
+
+        // SVG LED도 업데이트
+        const svgLogo = document.getElementById('led-logo');
+        const svgDpi = document.getElementById('led-dpi');
+        if (svgLogo) {
+            svgLogo.style.fill = logoSettings.effect === 'off' ? 'transparent' : logoSettings.color;
+            svgLogo.style.filter = logoSettings.effect === 'off' ? 'none' : `drop-shadow(0 0 8px ${logoSettings.color})`;
+        }
+        if (svgDpi) {
+            svgDpi.style.fill = dpiSettings.effect === 'off' ? 'transparent' : dpiSettings.color;
+            svgDpi.style.filter = dpiSettings.effect === 'off' ? 'none' : `drop-shadow(0 0 5px ${dpiSettings.color})`;
+        }
+    }
+
+    /**
+     * 단일 LED 영역에 효과 적용
+     */
+    applyZoneEffect(zone, settings) {
+        if (!zone) return;
+
+        const brightness = (settings.brightness || 100) / 100;
+
+        if (settings.effect === 'off') {
+            zone.style.background = 'transparent';
+            zone.style.boxShadow = 'none';
+            zone.style.animation = 'none';
+        } else if (settings.effect === 'cycle') {
+            zone.style.animation = `rgbCycle ${settings.speed}ms linear infinite`;
+            zone.style.boxShadow = `0 0 30px currentColor`;
+            zone.style.opacity = brightness;
+        } else {
+            zone.style.animation = settings.effect === 'breathing' ?
+                `breathing ${settings.speed}ms ease-in-out infinite` : 'none';
+            zone.style.background = settings.color;
+            zone.style.opacity = brightness;
+            zone.style.boxShadow = `0 0 30px ${settings.color}`;
+        }
     }
 
     /**

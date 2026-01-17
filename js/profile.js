@@ -11,7 +11,7 @@ class ProfileManager {
     }
 
     /**
-     * 기본 프로필 생성
+     * 기본 프로필 생성 (G502 11개 버튼 + 2 LED 영역)
      */
     createDefaultProfile(index) {
         return {
@@ -26,26 +26,40 @@ class ProfileManager {
                 { enabled: false, x: 6400, y: 6400, color: DPI_COLORS[3] },
                 { enabled: false, x: 12800, y: 12800, color: DPI_COLORS[4] },
             ],
+            dpiShift: 400, // DPI 시프트 (스나이퍼 버튼) 값
             defaultDpiStage: 1,
             pollingRate: 1000,
             angleSnapping: false,
             lod: 'medium',
+            // 두 LED 영역 (로고, DPI 표시등)
             rgb: {
-                effect: 'static',
-                color: '#00d4aa',
-                brightness: 100,
-                speed: 1000,
+                logo: {
+                    effect: 'static',
+                    color: '#00d4aa',
+                    brightness: 100,
+                    speed: 1000,
+                },
+                dpi: {
+                    effect: 'static',
+                    color: '#00d4aa',
+                    brightness: 100,
+                    speed: 1000,
+                },
+                syncZones: true, // 두 영역 동기화 여부
             },
+            // G502 11개 버튼
             buttons: {
                 left: { action: 'button', value: 'click' },
                 right: { action: 'button', value: 'context' },
                 middle: { action: 'button', value: 'middle_click' },
-                back: { action: 'button', value: 'back' },
-                forward: { action: 'button', value: 'forward' },
-                dpi: { action: 'button', value: 'dpi_cycle' },
-                gshift: { action: 'button', value: 'gshift' },
-                scroll_left: { action: 'button', value: 'scroll_left' },
-                scroll_right: { action: 'button', value: 'scroll_right' },
+                wheel_left: { action: 'button', value: 'scroll_left' },
+                wheel_right: { action: 'button', value: 'scroll_right' },
+                back: { action: 'button', value: 'back' },         // G4
+                forward: { action: 'button', value: 'forward' },   // G5
+                dpi_up: { action: 'button', value: 'dpi_up' },     // G7
+                dpi_down: { action: 'button', value: 'dpi_down' }, // G8
+                dpi_shift: { action: 'button', value: 'dpi_shift' }, // G9 스나이퍼
+                g6: { action: 'button', value: 'gshift' },         // G6 프로필/G-Shift
             },
             macros: [],
         };

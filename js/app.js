@@ -183,26 +183,62 @@ class App {
      * RGB 이벤트 리스너 설정
      */
     setupRgbListeners() {
+        // 현재 선택된 LED 영역 (logo, dpi, both)
+        this.selectedLedZone = 'logo';
+
+        // LED 영역 선택 버튼
+        document.querySelectorAll('.zone-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.zone-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                this.selectedLedZone = btn.dataset.zone;
+
+                // 선택된 영역의 현재 설정을 UI에 반영
+                const profile = profileManager.getCurrentProfile();
+                const zone = this.selectedLedZone === 'both' ? 'logo' : this.selectedLedZone;
+                const rgbSettings = profile.rgb[zone] || profile.rgb.logo;
+
+                document.getElementById('rgbEffect').value = rgbSettings.effect;
+                document.getElementById('rgbColor').value = rgbSettings.color;
+                document.getElementById('rgbColorHex').value = rgbSettings.color;
+                document.getElementById('rgbBrightness').value = rgbSettings.brightness;
+                document.getElementById('brightnessValue').textContent = rgbSettings.brightness;
+                document.getElementById('rgbSpeed').value = rgbSettings.speed;
+                document.getElementById('speedValue').textContent = rgbSettings.speed;
+
+                ui.updateRgbControls(rgbSettings.effect);
+
+                // LED 프리뷰에서 선택 표시
+                document.getElementById('ledZone1').classList.toggle('selected', this.selectedLedZone === 'logo' || this.selectedLedZone === 'both');
+                document.getElementById('ledZone2').classList.toggle('selected', this.selectedLedZone === 'dpi' || this.selectedLedZone === 'both');
+            });
+        });
+
+        // LED 영역 클릭으로도 선택 가능
+        document.getElementById('ledZone1').addEventListener('click', () => {
+            document.getElementById('zoneLogo').click();
+        });
+        document.getElementById('ledZone2').addEventListener('click', () => {
+            document.getElementById('zoneDpi').click();
+        });
+
         // 효과 선택
         document.getElementById('rgbEffect').addEventListener('change', (e) => {
-            profileManager.updateRgbSettings({ effect: e.target.value });
+            this.updateZoneRgbSettings({ effect: e.target.value });
             ui.updateRgbControls(e.target.value);
-            ui.updateRgbPreview(profileManager.getCurrentProfile().rgb);
         });
 
         // 색상 선택
         document.getElementById('rgbColor').addEventListener('input', (e) => {
             document.getElementById('rgbColorHex').value = e.target.value;
-            profileManager.updateRgbSettings({ color: e.target.value });
-            ui.updateRgbPreview(profileManager.getCurrentProfile().rgb);
+            this.updateZoneRgbSettings({ color: e.target.value });
         });
 
         document.getElementById('rgbColorHex').addEventListener('change', (e) => {
             let color = e.target.value;
             if (/^#[0-9a-fA-F]{6}$/.test(color)) {
                 document.getElementById('rgbColor').value = color;
-                profileManager.updateRgbSettings({ color });
-                ui.updateRgbPreview(profileManager.getCurrentProfile().rgb);
+                this.updateZoneRgbSettings({ color });
             }
         });
 
@@ -210,16 +246,14 @@ class App {
         document.getElementById('rgbBrightness').addEventListener('input', (e) => {
             const value = parseInt(e.target.value);
             document.getElementById('brightnessValue').textContent = value;
-            profileManager.updateRgbSettings({ brightness: value });
-            ui.updateRgbPreview(profileManager.getCurrentProfile().rgb);
+            this.updateZoneRgbSettings({ brightness: value });
         });
 
         // 속도
         document.getElementById('rgbSpeed').addEventListener('input', (e) => {
             const value = parseInt(e.target.value);
             document.getElementById('speedValue').textContent = value;
-            profileManager.updateRgbSettings({ speed: value });
-            ui.updateRgbPreview(profileManager.getCurrentProfile().rgb);
+            this.updateZoneRgbSettings({ speed: value });
         });
 
         // 프리셋 색상
@@ -228,10 +262,29 @@ class App {
                 const color = preset.dataset.color;
                 document.getElementById('rgbColor').value = color;
                 document.getElementById('rgbColorHex').value = color;
-                profileManager.updateRgbSettings({ color });
-                ui.updateRgbPreview(profileManager.getCurrentProfile().rgb);
+                this.updateZoneRgbSettings({ color });
             });
         });
+    }
+
+    /**
+     * 선택된 LED 영역의 RGB 설정 업데이트
+     */
+    updateZoneRgbSettings(settings) {
+        const profile = profileManager.getCurrentProfile();
+
+        if (this.selectedLedZone === 'both') {
+            // 두 영역 모두 업데이트
+            profile.rgb.logo = { ...profile.rgb.logo, ...settings };
+            profile.rgb.dpi = { ...profile.rgb.dpi, ...settings };
+            profile.rgb.syncZones = true;
+        } else {
+            // 선택된 영역만 업데이트
+            profile.rgb[this.selectedLedZone] = { ...profile.rgb[this.selectedLedZone], ...settings };
+            profile.rgb.syncZones = false;
+        }
+
+        ui.updateRgbPreview(profile.rgb);
     }
 
     /**

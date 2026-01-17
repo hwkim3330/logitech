@@ -742,11 +742,13 @@ body {
 
 .rgb-preview {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: var(--spacing-xl);
     background: var(--bg-tertiary);
     border-radius: var(--radius-lg);
+    gap: var(--spacing-md);
 }
 
 .rgb-mouse-preview {
@@ -762,6 +764,16 @@ body {
     position: absolute;
     border-radius: 50%;
     transition: var(--transition-normal);
+    cursor: pointer;
+}
+
+.led-zone:hover {
+    transform: scale(1.1);
+}
+
+.led-zone.selected {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 2px;
 }
 
 #ledZone1 {
@@ -780,6 +792,64 @@ body {
     left: 35%;
     background: var(--accent-primary);
     box-shadow: 0 0 20px var(--accent-primary);
+    border-radius: 3px;
+}
+
+.led-zone-labels {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.zone-label {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-sm);
+}
+
+/* Zone Selector */
+.zone-selector {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.zone-btn {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+}
+
+.zone-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.zone-btn.active {
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border-color: var(--accent-primary);
+}
+
+.zone-btn i {
+    font-size: 0.9rem;
+}
+
+/* LED SVG zones in mouse visual */
+.led-zone-svg {
+    transition: var(--transition-normal);
+    filter: drop-shadow(0 0 8px currentColor);
 }
 
 .rgb-controls {
